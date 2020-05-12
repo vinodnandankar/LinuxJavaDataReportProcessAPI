@@ -24,6 +24,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -45,9 +46,9 @@ public class DataReportPApiService {
 	
 	
 	/*-----------------------Code to read System Api---------------------------*/
-//	@Scheduled(fixedRate = 1000)
+	@Scheduled(fixedRate = 1000)
 	public Map<String, Object> getDataReport() {
-//		System.out.println("Hi======================================");
+		System.out.println("Executing Schedular for second======================================");
 		Map<String, Object> response = new HashMap<>();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -71,15 +72,23 @@ public class DataReportPApiService {
 		//Retrieve the row and check for null
 		XSSFRow sheetrow = sheet.getRow(findRow(sheet, srNo));
 		if(sheetrow == null){
-			throw new Exception("Server not found with name : " + srNo);
+			throw new Exception("Server not found with SrNo : " + srNo);
 		}
 
 		//Update the value of cell
 		
 		String commentExisting=getStringValue(sheetrow.getCell(27));
-		commentExisting=commentExisting +","+ comment;
-		Cell commentCell = getCellFromRowByNum(sheetrow, COLUMN_COMMENT_NUM);
-		commentCell.setCellValue(commentExisting);
+		if(commentExisting==null || commentExisting.isEmpty() || commentExisting == "") {
+			Cell commentCell = getCellFromRowByNum(sheetrow, COLUMN_COMMENT_NUM);
+			commentCell.setCellValue(comment);
+		}else if (commentExisting != null) {
+			commentExisting=commentExisting +","+ comment;
+			Cell commentCell = getCellFromRowByNum(sheetrow, COLUMN_COMMENT_NUM);
+			commentCell.setCellValue(commentExisting);
+		}
+//		commentExisting=commentExisting +","+ comment;
+//		Cell commentCell = getCellFromRowByNum(sheetrow, COLUMN_COMMENT_NUM);
+//		commentCell.setCellValue(commentExisting);
 		Cell proposedDateCell = getCellFromRowByNum(sheetrow, COLUMN_PROPOSED_DATE_NUM);
 		proposedDateCell.setCellValue(proposedDate);
 		modifyCellTypeAsDate(workbook, proposedDateCell);
@@ -157,30 +166,14 @@ public class DataReportPApiService {
 	}
 	private static int findRow(XSSFSheet sheet, int cellContent) {
 		for (Row row : sheet) {
-			/*for (Cell cell : row) {
+			for (Cell cell : row) {
 				if (cell.getCellType() == CellType.NUMERIC) {
-//					if (cell.getRichStringCellValue().getString().trim().equals(cellContent)) {
+						if (cell.getNumericCellValue()==cellContent) {
 						return row.getRowNum();  
 					}
-				}*/
-			double cv = Double.parseDouble(row.getCell(0).toString());
-			System.out.println("double converted value============="+cv);
-
-			int cv1 = (int)cv;
-			System.out.println("int converted value============="+cv1);
-
-			 String str = String.valueOf(cv1);
-				System.out.println("String converted value============="+str);
-
-//			Cell cell = row.getCell(0);
-//			String value= String.valueOf(cell.getNumericCellValue());
-//           int intVal = Integer.parseInt(value);
-			System.out.println("Cell============="+str);
-			if((str.equals(cellContent))) {
-				return row.getRowNum();
+				}
 			}
-			}
-//		}               
+		}               
 		return -1;
 	}
 
