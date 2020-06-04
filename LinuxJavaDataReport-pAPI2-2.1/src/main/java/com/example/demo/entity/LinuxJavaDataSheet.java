@@ -6,6 +6,7 @@ import java.util.Date;
 import com.example.demo.util.JsonDateDeserializer;
 import com.example.demo.util.JsonDateSerializer;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.OptBoolean;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -43,6 +44,8 @@ public class LinuxJavaDataSheet implements Serializable{
 	private String vendor;
 	private String embeddedType;
 	private String javaClass2;
+	private int javaRelease;
+	private int javaBuild;
 	private String suspectedLatestJavaVersion;
 	private String comments;
 	private Date proposedDate;
@@ -284,5 +287,25 @@ public class LinuxJavaDataSheet implements Serializable{
 
 	public void setProposedDate(Date proposedDate) {
 		this.proposedDate = proposedDate;
+	}
+
+
+	public int getJavaRelease() {
+		return javaRelease;
+	}
+
+
+	public void setJavaRelease(int javaRelease) {
+		this.javaRelease = javaRelease;
+	}
+
+
+	public int getJavaBuild() {
+		return javaBuild;
+	}
+
+
+	public void setJavaBuild(int javaBuild) {
+		this.javaBuild = javaBuild;
 	}
 }
